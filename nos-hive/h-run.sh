@@ -58,4 +58,7 @@ sudo systemctl stop hive-watchdog 2>&1 | tee -a "$LOG_FILE"
 sudo systemctl disable hive-watchdog 2>&1 | tee -a "$LOG_FILE"
 
 echo "Starting nosana..."
-wget -qO- https://nosana.com/start.sh | sudo script -qec "bash -s" /dev/null | tee -a "$LOG_FILE"
+curl -fsSL https://nosana.com/start.sh -o /tmp/start.sh
+sudo bash /tmp/start.sh 2>&1 | sudo tee -a "$LOG_FILE"
+# in another shell:
+tail -f "$LOG_FILE"
