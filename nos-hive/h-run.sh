@@ -45,7 +45,7 @@ echo "CUSTOM_CONFIG_FILENAME = $CUSTOM_CONFIG_FILENAME"
 # Function to handle cleanup when the miner stops
 cleanup() {
     echo "Stopping nosana..." | tee -a "$LOG_FILE"
-    sudo docker ps -q --filter "name=nosana" | xargs docker stop 2>&1 | tee -a "$LOG_FILE"
+    sudo docker ps --format '{{.ID}} {{.Image}} {{.Names}}' | awk '$2 ~ /^nosana\// || tolower($3) ~ /nosana/ {print $1}' | xargs -r docker stop
     exit 0
 }
 
