@@ -58,5 +58,12 @@ sudo systemctl stop hive-watchdog 2>&1 | tee -a "$LOG_FILE"
 sudo systemctl disable hive-watchdog 2>&1 | tee -a "$LOG_FILE"
 
 echo "Starting nosana..."
-CI=1 TERM=dumb \
-wget -qO- https://nosana.com/start.sh | sudo -E bash -s 2>&1 | tee -a "$LOG_FILE"
+# 1) Run the bootstrap once with a TTY
+curl -fsSL https://nosana.com/start.sh -o /tmp/start.sh
+sudo script -qec "bash /tmp/start.sh" /dev/null
+
+# 2) Keep foreground attached to the node logs (so Hive stays 'running')
+#    Find the container/service name first:
+docker ps --format '{{.Names}}'
+# Suppose it shows 'nosana-node' (adjust if different):
+docker logs -f nosana-node
